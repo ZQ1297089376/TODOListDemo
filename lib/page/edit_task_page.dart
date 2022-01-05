@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list_demo/components/db_tool.dart';
 import 'package:todo_list_demo/model/task.dart';
-import 'package:intl/intl.dart';
 
 class EditTaskPage extends StatefulWidget {
   const EditTaskPage({Key key, this.title, this.task}) : super(key: key);
@@ -16,7 +15,19 @@ class EditTaskPage extends StatefulWidget {
 
 class _EditTaskPageState extends State<EditTaskPage> {
 
+  String _taskTitle = '';
+  String _taskDesc = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _taskTitle = widget.task.title;
+    _taskDesc = widget.task.description;
+  }
+
   onSubmit() async {
+    widget.task.title = _taskTitle;
+    widget.task.description = _taskDesc;
     DataBase db = DataBase();
     if (widget.task.id == null) {
       await db.insert(widget.task);
@@ -34,10 +45,11 @@ class _EditTaskPageState extends State<EditTaskPage> {
         actions: [
           TextButton(
             onPressed: () {
-              if (widget.task.title == null || widget.task.title.isEmpty) {
+              if (_taskTitle == null || _taskTitle == '') {
                 showDialog(context: context, builder: (c) => _buildAlertDialog());
+              } else {
+                onSubmit();
               }
-              onSubmit();
             },
             child: const Text(
               'Done',
@@ -55,14 +67,14 @@ class _EditTaskPageState extends State<EditTaskPage> {
           children: [
             TextField(
               controller: TextEditingController(
-                text: widget.task.title,
+                text: _taskTitle,
               ),
               decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Title'
               ),
               onChanged: (v) {
-                widget.task.title = v;
+                _taskTitle = v;
               },
             ),
             const SizedBox(height: 20),
@@ -70,7 +82,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
               minLines: 5,
               maxLines: 10,
               controller: TextEditingController(
-                text: widget.task.description,
+                text: _taskDesc,
               ),
               decoration: const InputDecoration(
                 contentPadding: EdgeInsets.all(10),
@@ -78,7 +90,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
                 border: OutlineInputBorder()
               ),
               onChanged: (v) {
-                widget.task.description = v;
+                _taskDesc = v;
               },
             ),
           ],
@@ -105,13 +117,10 @@ class _EditTaskPageState extends State<EditTaskPage> {
     if (widget.task.createTime == null) {
       return const SizedBox.shrink();
     } else {
-      DateTime createTime = widget.task.createTime;
-      DateFormat formatter = DateFormat("yyyy-MM-dd HH:mm");
-      String time = formatter.format(createTime);
       return Container(
         height: 44,
         alignment: Alignment.center,
-        child: Text('Created at $time'),
+        child: Text('Created at ${widget.task.createTime}'),
       );
     }
   }

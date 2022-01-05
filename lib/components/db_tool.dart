@@ -23,7 +23,7 @@ class DataBase {
   `title` text not null,
   `description` text,
   `completed` integer not null,
-  `create_time` text
+  `create_time` timestamp default current_timestamp
   )
   ''';
 
@@ -31,13 +31,11 @@ class DataBase {
   insert into `task` (
   `title`,
   `description`,
-  `completed`,
-  `create_time`
+  `completed`
   ) values (
     'Slide left or right to delete task',
     'This is a demo',
-    0,
-    ''
+    0
   )
   ''';
 

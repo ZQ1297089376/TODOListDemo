@@ -5,14 +5,14 @@ class Task {
   String title;
   String description;
   bool completed;
-  DateTime createTime;
+  String createTime;
 
   Task.fromMap(Map<String, dynamic> map) {
     id = map['id'];
     title = map['title'];
-    description = map['description'];
+    description = map['description'] ?? '';
     completed = map['completed'] == 1;
-    createTime = getCreateTime(map['create_time']);
+    createTime = map['create_time'];
   }
 
   Map<String, dynamic> toMap() {
@@ -24,17 +24,6 @@ class Task {
     if (id != null) {
       map['id'] = id;
     }
-    if (createTime == null) {
-      map['create_time'] = DateTime.now().millisecondsSinceEpoch.toString();
-    }
     return map;
-  }
-
-  DateTime getCreateTime(String time) {
-    if (time == null || time.isEmpty) {
-      return DateTime.now();
-    } else {
-      return DateTime.fromMillisecondsSinceEpoch(int.parse(time));
-    }
   }
 }

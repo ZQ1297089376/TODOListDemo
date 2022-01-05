@@ -54,8 +54,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   addTask() async {
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (c) => EditTaskPage(title: 'Add a task', task: Task()))).then((v) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(
+            builder: (c) => EditTaskPage(title: 'Add a task', task: Task())))
+        .then((v) {
       filterTasks(0);
     });
   }
@@ -129,82 +131,81 @@ class _HomePageState extends State<HomePage> {
           alignment: Alignment.centerLeft,
           child: Text(
             getFilterTitle(),
-            style: const TextStyle(
-              fontWeight: FontWeight.bold
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
         Expanded(
           child: _isLoading
               ? const Center(
-            child: CircularProgressIndicator(),
-          ) : ListView.separated(
-            separatorBuilder: (context, index) => Divider(
-              thickness: 1,
-              height: 1,
-              color: Colors.grey[200],
-            ),
-            itemCount: tasks.length,
-            itemBuilder: (context, index) {
-              Task task = tasks[index];
-              return Dismissible(
-                key: Key(UniqueKey().toString()),
-                child: _buildItem(task),
-                background: Container(
-                  color: Colors.red,
-                  alignment: Alignment.center,
-                  child: const ListTile(
-                    leading: Icon(
-                      Icons.delete,
-                      color: Colors.white,
-                    ),
+                  child: CircularProgressIndicator(),
+                )
+              : ListView.separated(
+                  separatorBuilder: (context, index) => Divider(
+                    thickness: 1,
+                    height: 1,
+                    color: Colors.grey[200],
                   ),
-                ),
-                secondaryBackground: Container(
-                  color: Colors.red,
-                  alignment: Alignment.center,
-                  child: const ListTile(
-                    trailing: Icon(
-                      Icons.delete,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                onDismissed: (v) {
-                  deleteTask(task.id);
-                  setState(() {
-                    tasks.removeAt(index);
-                  });
-                },
-                confirmDismiss: (v) async {
-                  var _alertDialog = AlertDialog(
-                    title:
-                    Text('"${task.title}" will be permanently deleted.'),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(true);
-                        },
-                        child: const Text('Delete Task'),
+                  itemCount: tasks.length,
+                  itemBuilder: (context, index) {
+                    Task task = tasks[index];
+                    return Dismissible(
+                      key: Key(UniqueKey().toString()),
+                      child: _buildItem(task),
+                      background: Container(
+                        color: Colors.red,
+                        alignment: Alignment.center,
+                        child: const ListTile(
+                          leading: Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(false);
-                        },
-                        child: const Text('Cancel'),
-                      )
-                    ],
-                  );
-                  var isDismiss = await showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return _alertDialog;
-                      });
-                  return isDismiss;
-                },
-              );
-            },
-          ),
+                      secondaryBackground: Container(
+                        color: Colors.red,
+                        alignment: Alignment.center,
+                        child: const ListTile(
+                          trailing: Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      onDismissed: (v) {
+                        deleteTask(task.id);
+                        setState(() {
+                          tasks.removeAt(index);
+                        });
+                      },
+                      confirmDismiss: (v) async {
+                        var _alertDialog = AlertDialog(
+                          title: Text(
+                              '"${task.title}" will be permanently deleted.'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(true);
+                              },
+                              child: const Text('Delete Task'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(false);
+                              },
+                              child: const Text('Cancel'),
+                            )
+                          ],
+                        );
+                        var isDismiss = await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return _alertDialog;
+                            });
+                        return isDismiss;
+                      },
+                    );
+                  },
+                ),
         )
       ],
     );
@@ -213,15 +214,15 @@ class _HomePageState extends State<HomePage> {
   Widget _buildItem(Task task) {
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (c) => EditTaskPage(title: 'Edit', task: task))).then((v) {
+        Navigator.of(context)
+            .push(MaterialPageRoute(
+                builder: (c) => EditTaskPage(title: 'Edit', task: task)))
+            .then((v) {
           setState(() {});
         });
       },
       child: Container(
-        constraints: const BoxConstraints(
-            minHeight: 60
-        ),
+        constraints: const BoxConstraints(minHeight: 60),
         child: Row(
           children: [
             Checkbox(
@@ -233,28 +234,42 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      task.title,
-                      style: TextStyle(
-                          color: task.completed ? Colors.grey : Colors.black87,
-                          decoration: task.completed ? TextDecoration.lineThrough : TextDecoration.none
+                child: task.description == null || task.description == ''
+                    ? Text(
+                        task.title ?? '',
+                        style: TextStyle(
+                            color:
+                                task.completed ? Colors.grey : Colors.black87,
+                            decoration: task.completed
+                                ? TextDecoration.lineThrough
+                                : TextDecoration.none),
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            task.title ?? '',
+                            style: TextStyle(
+                                color: task.completed
+                                    ? Colors.grey
+                                    : Colors.black87,
+                                decoration: task.completed
+                                    ? TextDecoration.lineThrough
+                                    : TextDecoration.none),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            task.description,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: Colors.grey[400],
+                                decoration: task.completed
+                                    ? TextDecoration.lineThrough
+                                    : TextDecoration.none),
+                          )
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      task.description,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          color: Colors.grey[400],
-                          decoration: task.completed ? TextDecoration.lineThrough : TextDecoration.none
-                      ),
-                    )
-                  ],
-                ),
               ),
             ),
             const SizedBox(width: 10),
