@@ -122,11 +122,11 @@ class DataBase {
     return maps.map((v) => Task.fromMap(v)).toList();
   }
 
-  /// Query all data
+  /// Query all data.
   Future<List<Task>> getAll() async {
     var d = await db;
     List<Map<String, dynamic>> maps = await d.query(_tableName,
-        columns: ['id', 'title', 'description', 'completed', 'create_time']);
+        columns: ['id', 'title', 'description', 'completed', 'create_time'], orderBy: 'create_time desc');
     return maps.map((it) => Task.fromMap(it)).toList();
   }
 }
